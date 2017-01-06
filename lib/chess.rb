@@ -6,10 +6,12 @@ require_relative "chess/bishop"
 require_relative "chess/queen"
 require_relative "chess/king"
 require_relative "chess/board"
+require_relative "chess/player"
 
 require "colorize"
 
 module Chess
-  b = Board.new
-  b.color_board
+  e = Player.new("white")
+  print e.select_move
+  print "\n"
 end
