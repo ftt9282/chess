@@ -10,5 +10,6 @@ require_relative "chess/board"
 require "colorize"
 
 module Chess
-
+  b = Board.new
+  b.color_board
 end
