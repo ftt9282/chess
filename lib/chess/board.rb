@@ -3,7 +3,6 @@ module Chess
     
     def initialize
       @board = Array.new(8){Array.new(8)}
-      @empty_space = "_"
       populate_board
     end
 
@@ -11,7 +10,12 @@ module Chess
       color = [:red, :light_black]
       @board.each_with_index do |x, xi|
       	x.each_with_index do |y, yi|
-      	  @board[xi][yi] = "_____".colorize(:color => :black, :background => color[yi%2])
+      	  if @board[xi][yi].nil?
+      	  	space = "    "
+      	  else
+      	  	space = " " + "#{@board[xi][yi].symbol}" + "  "
+      	  end
+      	  @board[xi][yi] = space.colorize(:background => color[yi%2])
       	  print @board[xi][yi]
       	end
       	print "\n"
