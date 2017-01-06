@@ -19,5 +19,10 @@ module Chess
       end
     end
 
+    # need to add castling
+    # ...
+    # end
+
+
   end
 end

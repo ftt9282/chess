@@ -12,7 +12,7 @@ module Chess
 
     def possible_moves
       x, y = @position
-      # calculates how far bishop can go in each direction before hitting the end of the board
+      # calculates how far a rook can go in each direction before hitting the end of the board
       west_moves(x, y) + north_moves(x, y) + east_moves(x, y) + south_moves(x, y)
     end
 
