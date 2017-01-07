@@ -7,11 +7,11 @@ require_relative "chess/queen"
 require_relative "chess/king"
 require_relative "chess/board"
 require_relative "chess/player"
+require_relative "chess/game"
 
 require "colorize"
 
 module Chess
-  e = Player.new("white")
-  print e.select_move
-  print "\n"
+new_game = Game.new
+new_game.start_game
 end

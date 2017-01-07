@@ -6,21 +6,23 @@ module Chess
       populate_board
     end
 
-    def color_board
+    def show_board
       color = [:red, :light_black]
       @board.each_with_index do |x, xi|
+      	print (xi - 8).abs.to_s + " "
       	x.each_with_index do |y, yi|
+
       	  if @board[xi][yi].nil?
       	  	space = "    "
       	  else
       	  	space = " " + "#{@board[xi][yi].symbol}" + "  "
       	  end
-      	  @board[xi][yi] = space.colorize(:background => color[yi%2])
-      	  print @board[xi][yi]
+      	  print space.colorize(:background => color[yi%2])
       	end
       	print "\n"
       	color.reverse!
       end
+      print "   A   B   C   D   E   F   G   H\n"
     end
 
     def populate_board
@@ -58,6 +60,15 @@ module Chess
       	  end
       	end
       end
+    end
+
+    def update_board(move_set)
+      start_pos, end_pos = move_set
+      x, y = start_pos
+      to_x, to_y = end_pos
+      piece = @board[x][y]
+      @board[to_x][to_y] = piece.class.new(piece.color, end_pos)
+      @board[x][y] = nil
     end
 
   end
