@@ -13,7 +13,7 @@ module Chess
 
     def select_move
       while 1
-      	puts "Select a beginning and an end move, please. (ex. a4 e1)"
+      	puts "#{@name}, select a beginning and an end move please. (ex. a4 e1)"
         begin
           start_move, end_move = convert_move_to_array(gets.chomp)
         rescue Exception=>e
@@ -41,6 +41,7 @@ module Chess
       start_pos_y = letter_hash[start_pos_y.to_sym]
       end_pos_y = letter_hash[end_pos_y.to_sym]
       start_pos_x, end_pos_x = assign_numbers(start_pos_x-1, end_pos_x-1)
+      check_for_same_space([start_pos_x, start_pos_y], [end_pos_x, end_pos_y])
 
       return [start_pos_x, start_pos_y], [end_pos_x, end_pos_y]
     end
@@ -69,12 +70,22 @@ module Chess
       end
     end
 
+    def check_for_same_space(start_pos, end_pos)
+      if start_pos == end_pos
+      	same_space
+      end
+    end
+
     def invalid_input
       raise "ERROR: That move you entered was invalid. Try again...".colorize(:color => :red)
     end
 
     def invalid_range
       raise "ERROR: That move you entered was out of range. Range is a-h and 1-8. Try again...".colorize(:color => :red)
+    end
+
+    def same_space
+      raise raise "ERROR: You literally just tried to move no where. Try again...".colorize(:color => :red)
     end
 
   end

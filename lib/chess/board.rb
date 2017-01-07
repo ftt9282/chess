@@ -62,6 +62,28 @@ module Chess
       end
     end
 
+    def filter_moves(from_position, to_position)
+  	  x, y = from_position
+  	  filtered_moves = []
+  	  possible_moves = @board[x][y].possible_moves
+  	  #filtered_moves + runs_into_piece(from_position, to_position, possible_moves) unless @board[x][y].class == Knight
+  	  runs_into_piece(from_position, to_position, possible_moves)
+  	end
+  	
+  	def lands_on_same_color(start_pos, end_pos, possible_moves)
+
+  	end
+
+  	def runs_into_piece(start_pos, end_pos, possible_moves)
+  	  valid_moves = []
+  	  blocking_pieces = possible_moves.select { |piece| piece.class != nil }
+      #possible_moves.each do |position|
+      	#position = x, y
+      	
+      #end
+      print blocking_pieces
+  	end
+
     def update_board(move_set)
       start_pos, end_pos = move_set
       x, y = start_pos
@@ -71,5 +93,8 @@ module Chess
       @board[x][y] = nil
     end
 
+    def king_in_check?
+      # threats << piece
+    end
   end
 end
