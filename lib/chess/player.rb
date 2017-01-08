@@ -1,6 +1,7 @@
 module Chess
   class Player
-  
+  	
+  	attr_reader :color
     def initialize(color)
       @name = get_name
       @color = color
@@ -14,8 +15,10 @@ module Chess
     def select_move
       while 1
       	puts "#{@name}, select a beginning and an end move please. (ex. a4 e1)"
+      	input = gets.chomp
+      	exit if input == 'quit'
         begin
-          start_move, end_move = convert_move_to_array(gets.chomp)
+          start_move, end_move = convert_move_to_array(input)
         rescue Exception=>e
           puts e
         else

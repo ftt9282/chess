@@ -12,11 +12,13 @@ module Chess
 
     # lists all moves and then returns the ones that won't go off the board
     def possible_moves
+      all_moves = []
       x, y = @position
       moves = [[x, y-1], [x-1, y-1], [x-1, y], [x-1, y+1], [x, y+1], [x+1, y+1], [x+1, y], [x+1, y-1]]
-      moves.select do |position|
-        position.all? { |number| number.between?(0,7) }
+      moves.each do |position|
+        all_moves << [position] if position.all? { |number| number.between?(0,7) }
       end
+      all_moves
     end
 
     # need to add castling

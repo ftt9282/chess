@@ -12,6 +12,7 @@ module Chess
 
     def possible_moves
       x, y = @position
+      all_moves = []
       moves = []
       # checks if the pawn is eligible for a double step
       if (x == 6 && @color == "white") || (x == 1 && @color == "black")
@@ -19,9 +20,10 @@ module Chess
       end
       # return the regular moves
       @color == "white" ? moves << [x-1, y] : moves << [x+1, y]
-      moves.select do |position|
-        position.all? { |number| number.between?(0,7) }
+      moves.each do |position|
+        all_moves << [position] if position.all? { |number| number.between?(0,7) }
       end
+      all_moves
     end
 
   end

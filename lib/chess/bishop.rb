@@ -11,9 +11,10 @@ module Chess
     end
 
     def possible_moves
+      all_moves = []
       x, y = @position
       # calculates how far bishop can go in each direction before hitting the end of the board
-      northwest_moves(x, y) + northeast_moves(x, y) + southeast_moves(x, y) + southwest_moves(x, y)
+      all_moves << northwest_moves(x, y) << northeast_moves(x, y) << southeast_moves(x, y) << southwest_moves(x, y)
     end
 
     def northwest_moves(x, y)

@@ -3,6 +3,7 @@ module Chess
     
     def initialize
       @board = Array.new(8){Array.new(8)}
+      #@last_move = nil
       populate_board
     end
 
@@ -11,13 +12,16 @@ module Chess
       @board.each_with_index do |x, xi|
       	print (xi - 8).abs.to_s + " "
       	x.each_with_index do |y, yi|
-
       	  if @board[xi][yi].nil?
       	  	space = "    "
       	  else
       	  	space = " " + "#{@board[xi][yi].symbol}" + "  "
       	  end
-      	  print space.colorize(:background => color[yi%2])
+      	  #if !@board[xi][yi].nil? && @last_move == @board[xi][yi].position
+      	  #	print space.colorize(:background => :light_blue)
+      	  #else
+      	  #end
+      	  print space.colorize(:background => color[yi%2])    	  
       	end
       	print "\n"
       	color.reverse!
@@ -62,39 +66,123 @@ module Chess
       end
     end
 
-    def filter_moves(from_position, to_position)
-  	  x, y = from_position
+    def filter_moves(position)
+  	  x, y = position
   	  filtered_moves = []
   	  possible_moves = @board[x][y].possible_moves
-  	  #filtered_moves + runs_into_piece(from_position, to_position, possible_moves) unless @board[x][y].class == Knight
-  	  runs_into_piece(from_position, to_position, possible_moves)
-  	end
-  	
-  	def lands_on_same_color(start_pos, end_pos, possible_moves)
-
+  	  @board[x][y].class == Pawn ? filtered_moves += pawn_movements(possible_moves, @board[x][y].color, @board[x][y].position) : filtered_moves += all_other_movements(possible_moves, @board[x][y].color)
   	end
 
-  	def runs_into_piece(start_pos, end_pos, possible_moves)
+  	def all_other_movements(possible_moves, piece_color)
   	  valid_moves = []
-  	  blocking_pieces = possible_moves.select { |piece| piece.class != nil }
-      #possible_moves.each do |position|
-      	#position = x, y
-      	
-      #end
-      print blocking_pieces
+  	  possible_moves.each do |direction|
+        direction.each do |square|
+          x, y = square
+          if !@board[x][y].nil?
+          	if @board[x][y].color != piece_color
+          	  valid_moves << square
+          	end
+          	break
+          else
+          	valid_moves << square
+          end
+        end
+  	  end
+  	  valid_moves
+  	end
+
+  	def pawn_movements(possible_moves, color, position)
+  	  valid_moves = []
+  	  from_x, from_y = position
+  	  if color == "white"
+  	  	check_for_takes = [[from_x-1,from_y-1],[from_x-1,from_y+1]]
+  	  else
+  	  	check_for_takes = [[from_x+1,from_y-1],[from_x+1,from_y+1]]
+  	  end
+  	  check_for_takes.each do |pos|
+        x, y = pos
+        if !@board[x][y].nil? && @board[x][y].color != color
+          valid_moves << pos
+        end
+  	  end
+  	  possible_moves.each do |direction|
+        direction.each do |square|
+          x, y = square
+          if @board[x][y].nil?
+          	valid_moves << square
+          end
+        end
+  	  end
+  	  valid_moves
   	end
 
     def update_board(move_set)
       start_pos, end_pos = move_set
       x, y = start_pos
       to_x, to_y = end_pos
+      #print "Moving the #{@board[x][y].class} from #{@board[x][y].position} to #{end_pos}\n"
       piece = @board[x][y]
       @board[to_x][to_y] = piece.class.new(piece.color, end_pos)
       @board[x][y] = nil
     end
 
-    def king_in_check?
-      # threats << piece
+    def king_in_check?(color, move_set = nil)      
+      #update_board(move_set) if move_set
+      position = find_king(color)
+      @board.each_with_index do |x, xi|
+      	x.each_with_index do |y, yi|
+      	  if !@board[xi][yi].nil? && @board[xi][yi].color != color
+      	  	moves_to_check = filter_moves(@board[xi][yi].position)
+		    if moves_to_check.include?(position) 
+		      #update_board(move_set.reverse) if move_set
+		      return true
+		    end	   
+      	  end
+      	end
+      end
+      #update_board(move_set.reverse) if move_set
+      return false
+    end
+
+    def checkmate?(color)
+      @board.each_with_index do |x, xi|
+      	x.each_with_index do |y, yi|
+      	  if !@board[xi][yi].nil? && @board[xi][yi].color == color
+      	  	moves = filter_moves(@board[xi][yi].position)
+      	  	moves.each do |to|
+      	  	  to_x, to_y = to
+      	  	  move_set = []
+      	  	  if !@board[to_x][to_y].nil? && @board[to_x][to_y] != color
+      	  	  	previous_class = @board[to_x][to_y].class
+      	  	  	previous_color = @board[to_x][to_y].color
+      	  	  	@board[to_x][to_y] = nil
+      	  	  	in_check = king_in_check?(color)
+      	  	  	@board[to_x][to_y] = previous_class.new(previous_color, to)
+      	  	  	return false if !in_check
+      	  	  end     	  	  
+              move_set << @board[xi][yi].position << to
+              update_board(move_set)
+              in_check = king_in_check?(color)
+              update_board(move_set.reverse)
+              return false if !in_check
+      	  	end
+      	  end
+      	end
+      	true
+      end
+    end
+
+    def find_king(color)
+      @board.each_with_index do |x, xi|
+      	x.each_with_index do |y, yi|
+      	  return @board[xi][yi].position if @board[xi][yi].class == King && @board[xi][yi].color == color
+      	end
+      end
+    end
+
+    def check_piece_color(position)
+      x, y = position
+      @board[x][y].color
     end
   end
 end

@@ -11,9 +11,10 @@ module Chess
     end
 
     def possible_moves
+      all_moves = []
       x, y = @position
       # calculates how far a rook can go in each direction before hitting the end of the board
-      west_moves(x, y) + north_moves(x, y) + east_moves(x, y) + south_moves(x, y)
+      all_moves << west_moves(x, y) << north_moves(x, y) << east_moves(x, y) << south_moves(x, y)
     end
 
     def west_moves(x, y)
